@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "SMTP邮件发送器",
+  "version": "1.0",
+  "description": "点击按钮通过SMTP发送邮件",
+  "permissions": ["storage"],
+  "host_permissions": ["https://smtpjs.com/*"],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
