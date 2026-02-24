@@ -1,0 +1,36 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.iml
+.claude/
+
+# Build outputs
+**/target/
+
+# Data directories
+**/data/
+
+# Temp files
+**/temp/
+*.log
+*.tmp
+
+# Rust
+Cargo.lock
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.env
+venv/
+
+#
+position_changes.csv
+trigger_history.json
