@@ -8,9 +8,11 @@
   },
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage",
+    "alarms"
   ],
   "host_permissions": [
-    "http://localhost:8888/"
+    "https://api.telegram.org/"
   ]
 }
