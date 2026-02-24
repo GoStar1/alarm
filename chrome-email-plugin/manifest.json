@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Email Sender Plugin",
+  "version": "1.0",
+  "description": "点击按钮发送邮件",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://localhost:8888/"
+  ]
+}
