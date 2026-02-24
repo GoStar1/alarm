@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // 发送多次消息函数
   function sendMultipleMessages(count) {
     let sent = 0;
-    const telegramUrl = 'https://api.telegram.org/bot8428839436:AAFLeIjO6xA7Xg_lTnCdLovcxOdc2ZF5Tkk/sendMessage?chat_id=8786035614&text=合约群里有新消息，请注意！！！';
+    const telegramUrl = 'https://api.telegram.org/bot8428839436:AAFLeIjO6xA7Xg_lTnCdLovcxOdc2ZF5Tkk/sendMessage?chat_id=8786035614&text=%E5%90%88%E7%BA%A6%E7%BE%A4%E9%87%8C%E6%9C%89%E6%96%B0%E6%B6%88%E6%81%AF%EF%BC%8C%E8%AF%B7%E6%B3%A8%E6%84%8F%EF%BC%81%EF%BC%81%EF%BC%81';
     
     const interval = setInterval(() => {
       if (sent >= count) {
