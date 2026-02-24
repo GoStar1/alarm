@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>交易计算器</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .calculator {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #555;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .results {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+      border-left: 4px solid #4CAF50;
+    }
+    .result-item {
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .result-label {
+      font-weight: bold;
+      color: #555;
+    }
+    .profit {
+      color: #4CAF50;
+    }
+    .loss {
+      color: #f44336;
+    }
+  </style>
+</head>
+<body>
+  <h1>交易计算器</h1>
+  <div class="calculator">
+    <div class="form-group">
+      <label for="entryPrice">开仓价 (USDT)</label>
+      <input type="number" id="entryPrice" step="0.0001" placeholder="例如: 35000">
+    </div>
+    <div class="form-group">
+      <label for="takeProfit">止盈价格 (USDT)</label>
+      <input type="number" id="takeProfit" step="0.0001" placeholder="例如: 36000">
+    </div>
+    <div class="form-group">
+      <label for="stopLoss">止损价格 (USDT)</label>
+      <input type="number" id="stopLoss" step="0.0001" placeholder="例如: 34000">
+    </div>
+    <div class="form-group">
+      <label for="entryAmount">开仓金额 (USDT)</label>
+      <input type="number" id="entryAmount" step="0.01" placeholder="例如: 100">
+    </div>
+    <div class="form-group">
+      <label for="leverage">杠杆倍数</label>
+      <input type="number" id="leverage" step="0.1" placeholder="例如: 10">
+    </div>
+    <button onclick="calculate()">计算</button>
+    
+    <div class="results" id="results">
+      <!-- 计算结果将在这里显示 -->
+    </div>
+  </div>
+  
+  <script>
+    function calculate() {
+      // 获取输入值
+      const entryPrice = parseFloat(document.getElementById('entryPrice').value);
+      const takeProfit = parseFloat(document.getElementById('takeProfit').value);
+      const stopLoss = parseFloat(document.getElementById('stopLoss').value);
+      const entryAmount = parseFloat(document.getElementById('entryAmount').value);
+      const leverage = parseFloat(document.getElementById('leverage').value);
+      
+      // 验证输入
+      if (!entryPrice || !takeProfit || !stopLoss || !entryAmount || !leverage) {
+        document.getElementById('results').innerHTML = '<p style="color: #f44336;">请填写所有字段</p>';
+        return;
+      }
+      
+      // 验证价格合理性
+      if (takeProfit <= entryPrice) {
+        document.getElementById('results').innerHTML = '<p style="color: #f44336;">止盈价格应该高于开仓价格</p>';
+        return;
+      }
+      
+      if (stopLoss >= entryPrice) {
+        document.getElementById('results').innerHTML = '<p style="color: #f44336;">止损价格应该低于开仓价格</p>';
+        return;
+      }
+      
+      // 计算盈利和亏损
+      const profitAmount = (takeProfit - entryPrice) / entryPrice * entryAmount * leverage;
+      const lossAmount = (entryPrice - stopLoss) / entryPrice * entryAmount * leverage;
+      const profitPercentage = (takeProfit - entryPrice) / entryPrice * 100 * leverage;
+      const lossPercentage = (entryPrice - stopLoss) / entryPrice * 100 * leverage;
+      
+      // 显示结果
+      document.getElementById('results').innerHTML = `
+        <div class="result-item">
+          <span class="result-label">盈利金额: </span>
+          <span class="profit">${profitAmount.toFixed(2)} USDT</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">亏损金额: </span>
+          <span class="loss">${lossAmount.toFixed(2)} USDT</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">盈利百分比: </span>
+          <span class="profit">${profitPercentage.toFixed(2)}%</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">亏损百分比: </span>
+          <span class="loss">${lossPercentage.toFixed(2)}%</span>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
