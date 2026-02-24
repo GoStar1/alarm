@@ -33,7 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
   function sendMessage() {
     statusDiv.textContent = 'Sending message...';
     
-    const telegramUrl = 'https://api.telegram.org/bot8428839436:AAFLeIjO6xA7Xg_lTnCdLovcxOdc2ZF5Tkk/sendMessage?chat_id=8786035614&text=%E4%BD%A0%E5%A5%BD%EF%BC%8C%E8%BF%99%E6%98%AF%E6%9D%A5%E8%87%AABot%E7%9A%84%E6%B6%88%E6%81%AF%EF%BC%81';
+    const telegramUrl = 'https://api.telegram.org/bot8428839436:AAFLeIjO6xA7Xg_lTnCdLovcxOdc2ZF5Tkk/sendMessage?chat_id=8786035614&text=%E5%90%88%E7%BA%A6%E7%BE%A4%E9%87%8C%E6%9C%89%E6%96%B0%E6%B6%88%E6%81%AF%EF%BC%8C%E8%AF%B7%E6%B3%A8%E6%84%8F%EF%BC%81%EF%BC%81%EF%BC%81';
+
     
     fetch(telegramUrl)
       .then(response => {
