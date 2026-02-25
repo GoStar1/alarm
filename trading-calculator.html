@@ -121,22 +121,13 @@
         return;
       }
       
-      // 验证价格合理性
-      if (takeProfit <= entryPrice) {
-        document.getElementById('results').innerHTML = '<p style="color: #f44336;">止盈价格应该高于开仓价格</p>';
-        return;
-      }
+      // 移除价格合理性验证，因为做空时止盈价格可能低于开仓价格，止损价格可能高于开仓价格
       
-      if (stopLoss >= entryPrice) {
-        document.getElementById('results').innerHTML = '<p style="color: #f44336;">止损价格应该低于开仓价格</p>';
-        return;
-      }
-      
-      // 计算盈利和亏损
-      const profitAmount = (takeProfit - entryPrice) / entryPrice * entryAmount * leverage;
-      const lossAmount = (entryPrice - stopLoss) / entryPrice * entryAmount * leverage;
-      const profitPercentage = (takeProfit - entryPrice) / entryPrice * 100 * leverage;
-      const lossPercentage = (entryPrice - stopLoss) / entryPrice * 100 * leverage;
+      // 计算盈利和亏损（支持做多和做空）
+      const profitAmount = Math.abs((takeProfit - entryPrice) / entryPrice) * entryAmount * leverage;
+      const lossAmount = Math.abs((entryPrice - stopLoss) / entryPrice) * entryAmount * leverage;
+      const profitPercentage = Math.abs((takeProfit - entryPrice) / entryPrice) * 100 * leverage;
+      const lossPercentage = Math.abs((entryPrice - stopLoss) / entryPrice) * 100 * leverage;
       
       // 显示结果
       document.getElementById('results').innerHTML = `
