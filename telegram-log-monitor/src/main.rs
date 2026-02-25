@@ -4,25 +4,13 @@ use std::time::{Duration, Instant};
 use std::sync::{Arc, Mutex};
 use reqwest::Client;
 use tokio::time::sleep;
-use urlencoding::encode;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let client = Arc::new(Client::new());
     let last_network_log = Arc::new(Mutex::new(Instant::now()));
-    let mut child = Command::new("log")
-        .arg("stream")
-        .arg("--predicate")
-        .arg("process == \"Telegram\"")
-        .arg("--level")
-        .arg("info")
-        .stdout(Stdio::piped())
-        .spawn()?;
-
-    let stdout = child.stdout.take().expect("Failed to open stdout");
-    let reader = io::BufReader::new(stdout);
-    let mut lines = reader.lines();
-
+    
+    // Start network check task
     let client_clone = client.clone();
     let last_clone = last_network_log.clone();
     tokio::spawn(async move {
@@ -42,31 +30,67 @@ async fn main() -> anyhow::Result<()> {
             sleep(Duration::from_secs(1)).await;
         }
     });
-
-    while let Some(line) = lines.next() {
-        let line = line?;
-        if line.contains("Telegram: (UserNotifications)") {
-            if let Err(e) = send_notification(&client).await {
-                eprintln!("Failed to send notification: {}", e);
+    
+    // Start log monitoring task
+    let client_clone2 = client.clone();
+    let last_clone2 = last_network_log.clone();
+    tokio::spawn(async move {
+        loop {
+            match Command::new("log")
+                .arg("stream")
+                .arg("--predicate")
+                .arg("process == \"Telegram\"")
+                .arg("--level")
+                .arg("info")
+                .stdout(Stdio::piped())
+                .spawn()
+            {
+                Ok(mut child) => {
+                    let stdout = child.stdout.take().expect("Failed to open stdout");
+                    let reader = io::BufReader::new(stdout);
+                    let mut lines = reader.lines();
+                    
+                    while let Some(line) = lines.next() {
+                        match line {
+                            Ok(line) => {
+                                if line.contains("Telegram: (UserNotifications)") {
+                                    if let Err(e) = send_notification(&client_clone2).await {
+                                        eprintln!("Failed to send notification: {}", e);
+                                    }
+                                }
+                                if line.contains("Telegram: (Network)") {
+                                    *last_clone2.lock().unwrap() = Instant::now();
+                                }
+                            },
+                            Err(e) => {
+                                eprintln!("Error reading log line: {}", e);
+                            }
+                        }
+                    }
+                },
+                Err(e) => {
+                    eprintln!("Failed to start log stream: {}", e);
+                    eprintln!("Will try again in 10 seconds...");
+                    sleep(Duration::from_secs(10)).await;
+                }
             }
         }
-        if line.contains("Telegram: (Network)") {
-            *last_network_log.lock().unwrap() = Instant::now();
-        }
+    });
+    
+    // Keep the main thread running
+    loop {
+        sleep(Duration::from_secs(60)).await;
     }
-
-    Ok(())
 }
 
 async fn send_notification(client: &Client) -> anyhow::Result<()> {
-    let url = "https://api.telegram.org/bot8428839436:AAFLeIjO6xA7Xg_lTnCdLovcxOdc2ZF5Tkk/sendMessage?chat_id=8786035614&text=%E5%90%88%E7%BA%A6%E7%BE%A4%E9%87%8C%E6%9C%89%E6%96%B0%E6%B6%88%E6%81%AF%EF%BC%8C%E8%AF%B7%E6%B3%A8%E6%84%8F%EF%BC%81%EF%BC%81%EF%BC%81";
+    let url = "https://api.telegram.org/bot8428839436:AAFLeIjO6xA7Xg_lTnCdLovcxOdc2ZF5Tkk/sendMessage?chat_id=8786035614&text=New%20group%20notification";
     client.get(url).send().await?;
     Ok(())
 }
 
 async fn send_network_error(client: &Client) -> anyhow::Result<()> {
-    let text = encode("本地telegram网络错误");
-    let url = format!("https://api.telegram.org/bot8428839436:AAFLeIjO6xA7Xg_lTnCdLovcxOdc2ZF5Tkk/sendMessage?chat_id=8786035614&text={}", text);
+    let url = "https://api.telegram.org/bot8428839436:AAFLeIjO6xA7Xg_lTnCdLovcxOdc2ZF5Tkk/sendMessage?chat_id=8786035614&text=Local%20Telegram%20service%20is%20down.";
     client.get(url).send().await?;
     Ok(())
 }
