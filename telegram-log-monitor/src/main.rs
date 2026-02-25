@@ -49,10 +49,12 @@ async fn main() -> anyhow::Result<()> {
                     let stdout = child.stdout.take().expect("Failed to open stdout");
                     let reader = io::BufReader::new(stdout);
                     let mut lines = reader.lines();
-                    
+                  
                     while let Some(line) = lines.next() {
                         match line {
                             Ok(line) => {
+
+                                println!("{}", line);
                                 if line.contains("Telegram: (UserNotifications)") {
                                     if let Err(e) = send_notification(&client_clone2).await {
                                         eprintln!("Failed to send notification: {}", e);
