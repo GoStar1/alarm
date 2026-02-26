@@ -12,6 +12,9 @@ use serde::Deserialize;
 use tungstenite::{connect, Error as WsError, Message};
 use url::Url;
 
+use reqwest::Client;
+use tokio::runtime::Runtime;
+
 // 配置结构
 #[derive(Deserialize, Clone)]
 struct PairConfig {
@@ -176,6 +179,14 @@ struct Ticker {
     c: String, // 当前价格
 }
 
+// 发送预警到Telegram
+async fn send_alert() -> anyhow::Result<()> {
+    let client = Client::new();
+    let url = "https://api.telegram.org/bot8428839436:AAFLeIjO6xA7Xg_lTnCdLovcxOdc2ZF5Tkk/sendMessage?chat_id=8786035614&text=BTC%20price%20alert%20triggered!";
+    client.get(url).send().await?;
+    Ok(())
+}
+
 // 播放警报声音（假设有一个alert.wav文件）
 fn play_alert_sound() -> Result<(), Box<dyn std::error::Error>> {
     let (_stream, stream_handle) = OutputStream::try_default()?;
@@ -184,6 +195,16 @@ fn play_alert_sound() -> Result<(), Box<dyn std::error::Error>> {
     let file = File::open("/Users/dahuzi/Documents/pugongying.mp3")?;
     let source = Decoder::new(BufReader::new(file))?;
     sink.append(source);
+    
+    // 发送预警（添加错误处理，确保即使发送失败也不会影响程序运行）
+    if let Ok(rt) = Runtime::new() {
+        if let Err(e) = rt.block_on(send_alert()) {
+            println!("Failed to send alert: {:?}", e);
+        }
+    } else {
+        println!("Failed to create runtime for sending alert");
+    }
+    
     sink.sleep_until_end();
     Ok(())
 }
