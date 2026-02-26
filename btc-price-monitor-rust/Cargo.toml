@@ -1,0 +1,13 @@
+[package]
+name = "crypto_alert"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+notify = "6.1.1"
+rodio = "0.18.1"
+serde = { version = "1.0.210", features = ["derive"] }
+serde_json = "1.0.128"
+toml = "0.8.19"
+tungstenite = { version = "0.24.0", features = ["native-tls"] }  # 添加 features = ["native-tls"] 以启用 TLS
+url = "2.5.2"

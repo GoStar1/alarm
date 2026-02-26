@@ -1,0 +1,3 @@
+[pairs]
+BTCUSDT = { high = 70000.0, low = 50000.0 }
+# ETHUSDT = { high = 4000.0, low = 2000.0 }
