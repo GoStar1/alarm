@@ -181,7 +181,7 @@ fn play_alert_sound() -> Result<(), Box<dyn std::error::Error>> {
     let (_stream, stream_handle) = OutputStream::try_default()?;
     let sink = Sink::try_new(&stream_handle)?;
 
-    let file = File::open("alert.wav")?;
+    let file = File::open("/Users/dahuzi/Documents/pugongying.mp3")?;
     let source = Decoder::new(BufReader::new(file))?;
     sink.append(source);
     sink.sleep_until_end();
