@@ -1,3 +1,5 @@
 [pairs]
-BTCUSDT = { high = 70000.0, low = 50000.0 }
+BTCUSDT = { high = 67700.0, low = 65553.0 }
+# DOTUSDT = { high = 1.63, low = 1.603 }
+# ICPUSDT = { high = 2.530, low = 1.58 }
 # ETHUSDT = { high = 4000.0, low = 2000.0 }
